@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Set
 
 import cfpq_data
 import networkx as nx
@@ -7,7 +7,21 @@ __all__ = ["GraphInfo", "get_graph_info", "generate_and_save_two_cycles"]
 
 
 class GraphInfo:
-    def __init__(self, nodes_count, edges_count, labels):
+    """
+    Encapsulates information about graph: number of nodes, number of edges, set of labels on edges.
+    It has not any binding to defined graph, it simply holds a info.
+
+    Attributes
+    ----------
+    nodes_count: int
+        Number of nodes in graph
+    edges_count: int
+        Number of edges in graph
+    labels: Set[str]
+        Set of labels on edges
+    """
+
+    def __init__(self, nodes_count: int, edges_count: int, labels: Set[str]):
         self.edges_count = edges_count
         self.nodes_count = nodes_count
         self.labels = labels
@@ -20,7 +34,18 @@ class GraphInfo:
     """
 
 
-def get_graph_info(graph: nx.MultiDiGraph):
+def get_graph_info(graph: nx.MultiDiGraph) -> GraphInfo:
+    """
+    Gets a info about graph encapsulated in GraphInfo object
+    Parameters
+    ----------
+    graph: nx.MultiDiGraph
+        Graph from which information is gained
+    Returns
+    -------
+    GraphInfo
+        Info about graph
+    """
     return GraphInfo(
         graph.number_of_nodes(),
         graph.number_of_edges(),
@@ -33,7 +58,25 @@ def generate_and_save_two_cycles(
     second_cycle_nodes_num: int,
     labels: Tuple[str, str],
     filename: str,
-):
+) -> None:
+    """
+    Generates labeled graph with two cycles and saves it to the file
+
+    Parameters
+    ----------
+    first_cycle_nodes_num: int
+        Number of nodes in the first cycle
+    second_cycle_nodes_num: int
+        Number of nodes in the second cycle
+    labels: Tuple[str, str]
+        Labels for the edges on the first and second cycle
+    filename: str
+        Name of file for saving graph
+
+    Returns
+    -------
+    None
+    """
     graph_generated = cfpq_data.labeled_two_cycles_graph(
         first_cycle_nodes_num, second_cycle_nodes_num, edge_labels=labels, verbose=False
     )

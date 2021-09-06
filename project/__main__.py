@@ -1,8 +1,15 @@
-from project import run
+from project import run_app
 
 
 def main():
-    run()
+    """
+    Main function, when we run console application
+
+    Returns
+    -------
+    None
+    """
+    run_app()
 
 
 if __name__ == "__main__":

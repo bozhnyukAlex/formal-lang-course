@@ -1,7 +1,9 @@
+from typing import List
+
 import project
 from project.commands import ExecutionException
 
-__all__ = ["run", "InputException"]
+__all__ = ["run_app", "InputException"]
 
 command_names = ["graph_info", "create_and_save", "quit"]
 
@@ -13,10 +15,13 @@ command_dict = {
 
 
 class InputException(Exception):
-    """Exception raised for errors in the input.
+    """
+    Exception raised for errors in the input.
 
-    Attributes:
-        message -- explanation of the error
+    Attributes
+    ----------
+        message: str
+            Explanation of the error
     """
 
     def __init__(self, message):
@@ -34,7 +39,25 @@ def print_options():
     print("(3) quit : Quit application.")
 
 
-def check_command(input_split):
+def check_command(input_split: List[str]) -> None:
+    """
+    Checks whether list of string matches to command of the application
+
+    Parameters
+    ----------
+    input_split: List[str]
+        List of strings to check
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    InputException
+        If there is no command with such name, or there is an error in the arguments
+
+    """
     current_command_name = input_split[0]
     if current_command_name not in command_names:
         raise InputException("Command not found!")
@@ -51,7 +74,14 @@ def check_command(input_split):
             raise InputException("Error in argument's number!")
 
 
-def run():
+def run_app() -> None:
+    """
+    Runs a console application
+
+    Returns
+    -------
+    None
+    """
     print_options()
     while True:
         input_text = input(">>> ")
