@@ -3,7 +3,7 @@ from typing import Tuple, Set
 import cfpq_data
 import networkx as nx
 
-__all__ = ["GraphInfo", "get_graph_info", "generate_and_save_two_cycles"]
+__all__ = ["GraphInfo", "graph_info", "generate_two_cycles_graph"]
 
 
 class GraphInfo:
@@ -34,7 +34,7 @@ class GraphInfo:
     """
 
 
-def get_graph_info(graph: nx.MultiDiGraph) -> GraphInfo:
+def graph_info(graph: nx.MultiDiGraph) -> GraphInfo:
     """
     Gets a info about graph encapsulated in GraphInfo object
     Parameters
@@ -53,14 +53,11 @@ def get_graph_info(graph: nx.MultiDiGraph) -> GraphInfo:
     )
 
 
-def generate_and_save_two_cycles(
-    first_cycle_nodes_num: int,
-    second_cycle_nodes_num: int,
-    labels: Tuple[str, str],
-    filename: str,
-) -> None:
+def generate_two_cycles_graph(
+    first_cycle_nodes_num: int, second_cycle_nodes_num: int, labels: Tuple[str, str]
+) -> nx.MultiDiGraph:
     """
-    Generates labeled graph with two cycles and saves it to the file
+    Generates graph with two cycles
 
     Parameters
     ----------
@@ -70,15 +67,13 @@ def generate_and_save_two_cycles(
         Number of nodes in the second cycle
     labels: Tuple[str, str]
         Labels for the edges on the first and second cycle
-    filename: str
-        Name of file for saving graph
 
     Returns
     -------
-    None
+    nx.MultiDiGraph
+        Generated graph with two cycles
     """
     graph_generated = cfpq_data.labeled_two_cycles_graph(
         first_cycle_nodes_num, second_cycle_nodes_num, edge_labels=labels, verbose=False
     )
-    graph = nx.drawing.nx_pydot.to_pydot(graph_generated)
-    graph.write_raw(filename)
+    return graph_generated

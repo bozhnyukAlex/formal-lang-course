@@ -1,13 +1,14 @@
-import os
 import sys
 from pathlib import Path
 
-import networkx
-import pydot
+import cfpq_data
+import networkx as nx
 
 from project.graphs import *
 
 __all__ = ["ExecutionException"]
+
+graph_pool = {}
 
 
 class ExecutionException(Exception):
@@ -24,15 +25,15 @@ class ExecutionException(Exception):
         self.message = message
 
 
-def graph_info(graph_filename: str) -> None:
+def get_graph_info(graph_name: str) -> None:
     """
-    Implementation of graph_info command in application.
+    Implementation of get_graph_info command in application.
     Prints information about graph by its name.
 
     Parameters
     ----------
-    graph_filename: str
-        name of the graph file
+    graph_name: str
+        Name of the graph
 
     Returns
     -------
@@ -41,36 +42,37 @@ def graph_info(graph_filename: str) -> None:
     Raises
     ------
     ExecutionException
-        If there is a problem file extension of file existence
+        If there is a problem in graph's name
     """
-    file = Path(graph_filename)
-    _, extension = os.path.splitext(graph_filename)
-    if not file.is_file():
-        raise ExecutionException("No such file exists!")
-    if extension != ".dot":
-        raise ExecutionException("Wrong extension of file!")
-    pydot_graph = pydot.graph_from_dot_file(graph_filename)[0]
-    graph = networkx.drawing.nx_pydot.from_pydot(pydot_graph)
-    info = get_graph_info(graph)
-    print("Information about graph")
+    if all(
+        graph_name not in cfpq_data.DATASET[graph_class].keys()
+        for graph_class in cfpq_data.DATASET.keys()
+    ):
+        raise ExecutionException("No such graph with this name!")
+
+    graph = cfpq_data.graph_from_dataset(graph_name, verbose=False)
+
+    info = graph_info(graph)
+
+    print("Information about graph:")
     print(info)
 
 
-def create_and_save(
-    filename: str,
+def create_two_cycles(
+    graph_name: str,
     nodes_first_num: str,
     nodes_second_num: str,
     label_first: str,
     label_second: str,
 ) -> None:
     """
-    Implementation of create_and_save command in application.
-    Generates labeled graph with two cycles and saves it in file.
+    Implementation of create_two_cycles command in application.
+    Create named and labeled graph with two cycles.
 
     Parameters
     ----------
-    filename: str
-        Name of the file for saving graph
+    graph_name: str
+        Name of the created graph
     nodes_first_num: str
         String representation of number of nodes on the first cycle
     nodes_second_num: str
@@ -84,16 +86,50 @@ def create_and_save(
     -------
     None
     """
-    file = Path(filename)
-    if not file.is_file():
-        open(filename, "w")
-    generate_and_save_two_cycles(
-        int(nodes_first_num),
-        int(nodes_second_num),
-        (label_first, label_second),
-        filename,
+    graph = generate_two_cycles_graph(
+        int(nodes_first_num), int(nodes_second_num), (label_first, label_second)
     )
-    print("Graph has been created and saved.")
+
+    graph_pool[graph_name] = graph
+
+    print(f"Graph {graph_name} has been created")
+
+
+def save_to_dot(graph_name: str, folder_path: str):
+    """
+    Implementation of save_to_dot command in application.
+    Saves given graph to the dot file in folder_path.
+
+    Parameters
+    ----------
+    graph_name: str
+        Name of saved graph
+    folder_path: str
+        Path to the folder where to save graph
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ExecutionException
+        If there is no graph with this name
+    """
+    if graph_name not in graph_pool:
+        raise ExecutionException("No graph with this name!")
+
+    graph = graph_pool[graph_name]
+
+    graph_dot = nx.drawing.nx_pydot.to_pydot(graph)
+    dot_path = f"{folder_path}/{graph_name}.dot"
+    dot_file = Path(dot_path)
+
+    if not dot_file.is_file():
+        open(dot_path, "w")
+
+    graph_dot.write_raw(dot_path)
+
+    print(f"Graph was saved in {dot_path}")
 
 
 def quit_app() -> None:
