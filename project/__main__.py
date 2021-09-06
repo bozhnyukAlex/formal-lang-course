@@ -1,4 +1,4 @@
-from console import run
+from project import run
 
 
 def main():

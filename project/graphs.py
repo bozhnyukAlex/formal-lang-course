@@ -3,6 +3,8 @@ from typing import Tuple
 import cfpq_data
 import networkx as nx
 
+__all__ = ["GraphInfo", "get_graph_info", "generate_and_save_two_cycles"]
+
 
 class GraphInfo:
     def __init__(self, nodes_count, edges_count, labels):

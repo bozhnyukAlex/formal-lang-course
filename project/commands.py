@@ -5,7 +5,9 @@ from pathlib import Path
 import networkx
 import pydot
 
-from graphs import generate_and_save_two_cycles, get_graph_info
+from project.graphs import *
+
+__all__ = ["ExecutionException"]
 
 
 class ExecutionException(Exception):

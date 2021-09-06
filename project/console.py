@@ -1,6 +1,8 @@
 import project
 from project.commands import ExecutionException
 
+__all__ = ["run", "InputException"]
+
 command_names = ["graph_info", "create_and_save", "quit"]
 
 command_dict = {
