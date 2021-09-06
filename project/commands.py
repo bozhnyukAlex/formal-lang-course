@@ -25,7 +25,7 @@ class ExecutionException(Exception):
         self.message = message
 
 
-def get_graph_info(graph_name: str) -> None:
+def get_graph_info(graph_name: str) -> GraphInfo:
     """
     Implementation of get_graph_info command in application.
     Prints information about graph by its name.
@@ -37,7 +37,8 @@ def get_graph_info(graph_name: str) -> None:
 
     Returns
     -------
-    None
+    GraphInfo
+        Info about graph with following name
 
     Raises
     ------
@@ -56,6 +57,7 @@ def get_graph_info(graph_name: str) -> None:
 
     print("Information about graph:")
     print(info)
+    return info
 
 
 def create_two_cycles(
@@ -95,7 +97,7 @@ def create_two_cycles(
     print(f"Graph {graph_name} has been created")
 
 
-def save_to_dot(graph_name: str, folder_path: str):
+def save_to_dot(graph_name: str, folder_path: str) -> str:
     """
     Implementation of save_to_dot command in application.
     Saves given graph to the dot file in folder_path.
@@ -108,7 +110,8 @@ def save_to_dot(graph_name: str, folder_path: str):
         Path to the folder where to save graph
     Returns
     -------
-    None
+    str
+        Path to the create .dot file
 
     Raises
     ------
@@ -130,6 +133,7 @@ def save_to_dot(graph_name: str, folder_path: str):
     graph_dot.write_raw(dot_path)
 
     print(f"Graph was saved in {dot_path}")
+    return dot_path
 
 
 def quit_app() -> None:
