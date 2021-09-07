@@ -1,17 +1,8 @@
-import cfpq_data
 import rdflib
 
-from project.commands import get_graph_info
+from project import commands
 
-graph_info = get_graph_info("travel")
-
-
-def setup_module(module):
-    print("basic setup module")
-
-
-def teardown_module(module):
-    print("basic teardown module")
+graph_info = commands.get_graph_info("travel")
 
 
 def test_graph_info_nodes():
@@ -47,7 +38,3 @@ def test_graph_info_labels():
         rdflib.term.URIRef("http://www.w3.org/2002/07/owl#intersectionOf"),
         rdflib.term.URIRef("http://www.w3.org/2002/07/owl#versionInfo"),
     }
-
-
-# def test_saving_graph():
-#    generate_and_save_two_cycles(10, 15, ("a", "b"), "resources/example_saving.dot")

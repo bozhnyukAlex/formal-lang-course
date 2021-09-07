@@ -66,7 +66,7 @@ def create_two_cycles(
     nodes_second_num: str,
     label_first: str,
     label_second: str,
-) -> None:
+) -> nx.MultiDiGraph:
     """
     Implementation of create_two_cycles command in application.
     Create named and labeled graph with two cycles.
@@ -86,7 +86,8 @@ def create_two_cycles(
 
     Returns
     -------
-    None
+    nx.MultiDiGraph
+        Created graph
     """
     graph = generate_two_cycles_graph(
         int(nodes_first_num), int(nodes_second_num), (label_first, label_second)
@@ -95,6 +96,7 @@ def create_two_cycles(
     graph_pool[graph_name] = graph
 
     print(f"Graph {graph_name} has been created")
+    return graph
 
 
 def save_to_dot(graph_name: str, folder_path: str) -> str:
@@ -111,7 +113,7 @@ def save_to_dot(graph_name: str, folder_path: str) -> str:
     Returns
     -------
     str
-        Path to the create .dot file
+        Related path to the .dot file with graph
 
     Raises
     ------
