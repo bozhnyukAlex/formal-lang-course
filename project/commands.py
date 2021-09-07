@@ -4,7 +4,7 @@ from pathlib import Path
 import cfpq_data
 import networkx as nx
 
-from project.graphs import *
+from project.graphs import GraphInfo, graph_info, generate_two_cycles_graph
 
 __all__ = [
     "ExecutionException",

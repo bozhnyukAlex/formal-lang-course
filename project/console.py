@@ -1,17 +1,17 @@
 from typing import List
 
 import project as p
-from project.commands import *
+from project import commands
 
 __all__ = ["run_app", "InputException"]
 
 command_names = ["get_graph_info", "create_two_cycles", "save_to_dot", "quit"]
 
 command_dict = {
-    command_names[0]: p.commands.get_graph_info,
-    command_names[1]: p.commands.create_two_cycles,
-    command_names[2]: p.commands.save_to_dot,
-    command_names[3]: p.commands.quit_app,
+    command_names[0]: commands.get_graph_info,
+    command_names[1]: commands.create_two_cycles,
+    command_names[2]: commands.save_to_dot,
+    command_names[3]: commands.quit_app,
 }
 
 
@@ -111,6 +111,6 @@ def run_app() -> None:
 
         try:
             command_dict[name](*input_split[1:])
-        except ExecutionException as ee:
+        except p.ExecutionException as ee:
             print(ee.message + " Try again!")
             continue
