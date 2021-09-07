@@ -6,7 +6,13 @@ import networkx as nx
 
 from project.graphs import *
 
-__all__ = ["ExecutionException"]
+__all__ = [
+    "ExecutionException",
+    "get_graph_info",
+    "create_two_cycles",
+    "save_to_dot",
+    "quit_app",
+]
 
 graph_pool = {}
 
@@ -17,8 +23,8 @@ class ExecutionException(Exception):
 
     Attributes
     ----------
-        message: str
-            Explanation of the error
+    message: str
+        Explanation of the error
     """
 
     def __init__(self, message: str):
