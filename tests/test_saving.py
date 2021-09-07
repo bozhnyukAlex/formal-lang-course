@@ -8,7 +8,7 @@ from project import graphs
 def test_saving_to_dot_path():
     commands.create_two_cycles("test_path", "3", "4", "a", "b")
     path = commands.save_to_dot("test_path", "tests/data")
-    assert path == "tests/data/test.dot"
+    assert path == "tests/data/test_path.dot"
 
 
 def test_saving_to_dot_nodes():
