@@ -6,3 +6,6 @@ from project.graphs import *
 
 import project.commands
 from project.commands import *
+
+import project.regex
+from project.regex import *

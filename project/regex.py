@@ -1,8 +1,10 @@
 from pyformlang.finite_automaton import DeterministicFiniteAutomaton
 from pyformlang.regular_expression import Regex
 
+__all__ = ["regex_to_min_dfa"]
 
-def regex_to_dfa(regex_str: str) -> DeterministicFiniteAutomaton:
+
+def regex_to_min_dfa(regex_str: str) -> DeterministicFiniteAutomaton:
     """
     Gets a string representation of regular expression and builds equivalent Deterministic Finite Automaton
 
@@ -19,4 +21,5 @@ def regex_to_dfa(regex_str: str) -> DeterministicFiniteAutomaton:
     regex = Regex(regex_str)
     enfa = regex.to_epsilon_nfa()
     dfa = enfa.to_deterministic()
-    return dfa
+    dfa_min = dfa.minimize()
+    return dfa_min
