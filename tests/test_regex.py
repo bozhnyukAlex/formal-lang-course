@@ -99,6 +99,6 @@ def test_get_min_dfa() -> None:
 
     actual_dfa = regex_to_min_dfa("a* l* e* x*")
 
-    assert actual_dfa == expected_dfa and len(actual_dfa.states) == len(
+    assert actual_dfa.is_equivalent_to(expected_dfa) and len(actual_dfa.states) == len(
         expected_dfa.states
     )
