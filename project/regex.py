@@ -17,6 +17,11 @@ def regex_to_min_dfa(regex_str: str) -> DeterministicFiniteAutomaton:
     -------
     DeterministicFiniteAutomaton
         Deterministic Finite Automaton, which is equivalent to given regular expression
+
+    Raises
+    ------
+    MisformedRegexError
+        If there is wrong form of string representation of regular expression
     """
     regex = Regex(regex_str)
     enfa = regex.to_epsilon_nfa()
