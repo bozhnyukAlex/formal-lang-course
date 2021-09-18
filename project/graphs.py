@@ -3,7 +3,10 @@ from typing import Tuple, Set
 import cfpq_data
 import networkx as nx
 
-__all__ = ["GraphInfo", "graph_info", "generate_two_cycles_graph"]
+__all__ = ["GraphInfo", "graph_info", "generate_two_cycles_graph", "graph_to_nfa"]
+
+from networkx import MultiDiGraph
+from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
 
 
 class GraphInfo:
@@ -77,3 +80,42 @@ def generate_two_cycles_graph(
         first_cycle_nodes_num, second_cycle_nodes_num, edge_labels=labels, verbose=False
     )
     return graph_generated
+
+
+def graph_to_nfa(
+    graph: MultiDiGraph, start_states: set = None, final_states: set = None
+) -> NondeterministicFiniteAutomaton:
+    """
+    Converts graph by name to the finite state automaton
+
+    Parameters
+    ----------
+    graph: MultiDiGraph
+        Graph to convert
+    start_states: set
+        Set of containing start nodes
+    final_states: set
+        Set of containing end nodes
+    Returns
+    -------
+    EpsilonNFA:
+        A epsilon nondeterministic finite automaton read from the graph
+    """
+
+    nfa = NondeterministicFiniteAutomaton()
+
+    for n_from, n_to in graph.edges():
+        e_data = graph.get_edge_data(n_from, n_to)[0]["label"]
+        nfa.add_transition(n_from, e_data, n_to)
+
+    if start_states is None:
+        start_states = set(graph.nodes())
+    if final_states is None:
+        final_states = set(graph.nodes())
+
+    for state in start_states:
+        nfa.add_start_state(State(state))
+    for state in final_states:
+        nfa.add_final_state(State(state))
+
+    return nfa
