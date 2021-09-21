@@ -8,6 +8,8 @@ __all__ = ["GraphInfo", "graph_info", "generate_two_cycles_graph", "graph_to_nfa
 from networkx import MultiDiGraph
 from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
 
+from project import ExecutionException
+
 
 class GraphInfo:
     """
@@ -96,22 +98,40 @@ def graph_to_nfa(
         Set of containing start nodes
     final_states: set
         Set of containing end nodes
+
     Returns
     -------
     EpsilonNFA:
         A epsilon nondeterministic finite automaton read from the graph
+
+    Raises
+    ------
+    ExecutionException:
+        If automata states do not match to the nodes of input graph
     """
 
     nfa = NondeterministicFiniteAutomaton()
+
+    graph_nodes = graph.nodes
 
     for n_from, n_to in graph.edges():
         e_data = graph.get_edge_data(n_from, n_to)[0]["label"]
         nfa.add_transition(n_from, e_data, n_to)
 
     if start_states is None:
-        start_states = set(graph.nodes())
+        start_states = set(graph_nodes)
     if final_states is None:
-        final_states = set(graph.nodes())
+        final_states = set(graph_nodes)
+
+    if not start_states.issubset(graph_nodes):
+        raise ExecutionException(
+            f"Invalid start states: {start_states.difference(set(graph_nodes))}"
+        )
+
+    if not final_states.issubset(graph_nodes):
+        raise ExecutionException(
+            f"Invalid final states: {final_states.difference(set(graph_nodes))}"
+        )
 
     for state in start_states:
         nfa.add_start_state(State(state))
