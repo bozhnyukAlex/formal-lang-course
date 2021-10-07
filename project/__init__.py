@@ -9,3 +9,9 @@ from project.commands import *
 
 import project.regex
 from project.regex import *
+
+import project.boolean_matrices
+from project.boolean_matrices import *
+
+import project.rpq
+from project.rpq import *
