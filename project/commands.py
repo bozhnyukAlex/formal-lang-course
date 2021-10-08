@@ -31,7 +31,7 @@ class ExecutionException(Exception):
         self.message = message
 
 
-def get_graph_info(graph_name: str) -> GraphInfo:
+def get_graph_info(graph_name: str, need_print: bool = False) -> GraphInfo:
     """
     Implementation of get_graph_info command in application.
     Prints information about graph by its name.
@@ -40,6 +40,8 @@ def get_graph_info(graph_name: str) -> GraphInfo:
     ----------
     graph_name: str
         Name of the graph
+    need_print: bool
+        Need print result or not
 
     Returns
     -------
@@ -61,8 +63,10 @@ def get_graph_info(graph_name: str) -> GraphInfo:
 
     info = graph_info(graph)
 
-    print("Information about graph:")
-    print(info)
+    if need_print:
+        print("Information about graph:")
+        print(info)
+
     return info
 
 
