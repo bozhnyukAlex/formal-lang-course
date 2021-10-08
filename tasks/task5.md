@@ -45,3 +45,5 @@
 - [ ] Оформить результаты экспериментов
 - [ ] Провести анализ результатов
 - [ ] Сделать notebook доступным по ссылке
+
+[Hometask link](https://colab.research.google.com/drive/1UHRqHsM2yGc-2BbsHKo5tFMt0g8nfi-b?usp=sharing)
