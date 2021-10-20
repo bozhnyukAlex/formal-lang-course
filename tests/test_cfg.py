@@ -79,29 +79,10 @@ def test_cnf_from_file_start_symbol(filename, axiom):
                 Production(Variable("CN"), [Variable("CN"), Variable("C#CNF#1")]),
             },
         ),
-        (
-            "example_2.txt",
-            "S",
-            {
-                Production(Variable("C#CNF#2"), [Variable("B"), Variable("C#CNF#3")]),
-                Production(Variable("A"), [Variable("a#CNF#"), Variable("C#CNF#2")]),
-                Production(
-                    Variable("C#CNF#1"), [Variable("e#CNF#"), Variable("f#CNF#")]
-                ),
-                Production(Variable("B"), [Variable("d#CNF#"), Variable("C#CNF#1")]),
-                Production(Variable("C#CNF#3"), [Variable("c#CNF#"), Variable("B")]),
-                Production(Variable("f#CNF#"), [Terminal("f")]),
-                Production(Variable("S"), [Variable("A"), Variable("B")]),
-                Production(Variable("c#CNF#"), [Terminal("c")]),
-                Production(Variable("d#CNF#"), [Terminal("d")]),
-                Production(Variable("a#CNF#"), [Terminal("a")]),
-                Production(Variable("e#CNF#"), [Terminal("e")]),
-            },
-        ),
     ],
 )
 def test_cnf_from_file_productions(filename, axiom, productions):
-    path = "tests/data/cfgs/" + filename
+    path = "../tests/data/cfgs/" + filename
     wcnf = get_wcnf_from_file(path, axiom)
     assert set(wcnf.productions) == set(productions)
 
