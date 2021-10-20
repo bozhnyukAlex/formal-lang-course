@@ -82,7 +82,7 @@ def test_cnf_from_file_start_symbol(filename, axiom):
     ],
 )
 def test_cnf_from_file_productions(filename, axiom, productions):
-    path = "../tests/data/cfgs/" + filename
+    path = "tests/data/cfgs/" + filename
     wcnf = get_wcnf_from_file(path, axiom)
     assert set(wcnf.productions) == set(productions)
 
