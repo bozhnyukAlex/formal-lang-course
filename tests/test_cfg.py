@@ -80,51 +80,16 @@ def test_cnf_from_file_start_symbol(filename, axiom):
             },
         ),
         (
-            "math.txt",
-            "Expr",
-            {
-                Production(Variable("MulOp"), [Terminal("div")]),
-                Production(Variable("Factor"), [Terminal("variable")]),
-                Production(Variable("Factor"), [Terminal("number")]),
-                Production(Variable("Term"), [Terminal("number")]),
-                Production(Variable("Term"), [Terminal("variable")]),
-                Production(Variable("Expr"), [Terminal("variable")]),
-                Production(Variable("Expr"), [Terminal("number")]),
-                Production(Variable("MulOp"), [Terminal("mul")]),
-                Production(Variable("Primary"), [Terminal("variable")]),
-                Production(Variable("AddOp"), [Terminal("sub")]),
-                Production(Variable("AddOp"), [Terminal("add")]),
-                Production(Variable("Primary"), [Terminal("number")]),
-                Production(Variable("Expr"), [Variable("Expr"), Variable("C#CNF#3")]),
-                Production(
-                    Variable("C#CNF#2"), [Variable("pow#CNF#"), Variable("Primary")]
-                ),
-                Production(
-                    Variable("Factor"), [Variable("Factor"), Variable("C#CNF#2")]
-                ),
-                Production(
-                    Variable("C#CNF#1"), [Variable("MulOp"), Variable("Factor")]
-                ),
-                Production(Variable("Term"), [Variable("Term"), Variable("C#CNF#1")]),
-                Production(Variable("Expr"), [Variable("AddOp"), Variable("Term")]),
-                Production(Variable("C#CNF#3"), [Variable("AddOp"), Variable("Term")]),
-                Production(Variable("pow#CNF#"), [Terminal("pow")]),
-                Production(Variable("Term"), [Variable("Factor"), Variable("C#CNF#2")]),
-                Production(Variable("Expr"), [Variable("Term"), Variable("C#CNF#1")]),
-                Production(Variable("Expr"), [Variable("Factor"), Variable("C#CNF#2")]),
-            },
-        ),
-        (
             "example_2.txt",
             "S",
             {
-                Production(Variable("C#CNF#2"), [Variable("c#CNF#"), Variable("B")]),
-                Production(Variable("A"), [Variable("a#CNF#"), Variable("C#CNF#1")]),
-                Production(Variable("C#CNF#1"), [Variable("B"), Variable("C#CNF#2")]),
-                Production(Variable("B"), [Variable("d#CNF#"), Variable("C#CNF#3")]),
+                Production(Variable("C#CNF#2"), [Variable("B"), Variable("C#CNF#3")]),
+                Production(Variable("A"), [Variable("a#CNF#"), Variable("C#CNF#2")]),
                 Production(
-                    Variable("C#CNF#3"), [Variable("e#CNF#"), Variable("f#CNF#")]
+                    Variable("C#CNF#1"), [Variable("e#CNF#"), Variable("f#CNF#")]
                 ),
+                Production(Variable("B"), [Variable("d#CNF#"), Variable("C#CNF#1")]),
+                Production(Variable("C#CNF#3"), [Variable("c#CNF#"), Variable("B")]),
                 Production(Variable("f#CNF#"), [Terminal("f")]),
                 Production(Variable("S"), [Variable("A"), Variable("B")]),
                 Production(Variable("c#CNF#"), [Terminal("c")]),
