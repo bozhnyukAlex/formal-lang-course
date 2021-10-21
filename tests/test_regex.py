@@ -1,10 +1,10 @@
 from typing import Iterable, List
 
 import pytest
+from pyformlang.finite_automaton import Symbol
 from pyformlang.regular_expression import MisformedRegexError
 
 from project.regex_utils import regex_to_min_dfa
-from pyformlang.finite_automaton import Symbol, DeterministicFiniteAutomaton, State
 
 
 def test_regex_to_dfa_deterministic():
