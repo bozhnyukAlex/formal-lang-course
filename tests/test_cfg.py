@@ -79,6 +79,16 @@ def test_cnf_from_file_start_symbol(filename, axiom):
                 Production(Variable("CN"), [Variable("CN"), Variable("C#CNF#1")]),
             },
         ),
+        (
+            "example_3.txt",
+            "S",
+            {
+                Production(Variable("a#CNF#"), [Terminal("a")]),
+                Production(Variable("S"), [Variable("a#CNF#"), Variable("b#CNF#")]),
+                Production(Variable("S"), []),
+                Production(Variable("b#CNF#"), [Terminal("b")]),
+            },
+        ),
     ],
 )
 def test_cnf_from_file_productions(filename, axiom, productions):
