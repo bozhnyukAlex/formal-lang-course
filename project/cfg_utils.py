@@ -1,4 +1,5 @@
 import os
+from typing import AbstractSet
 
 from pyformlang.cfg import CFG, Variable, Production, Epsilon
 
@@ -237,9 +238,27 @@ def get_wcnf_from_text(cfg_text: str, start_symbol: str = None) -> CFG:
     return CFG(start_symbol=wcnf.start_symbol, productions=set(new_productions))
 
 
-def __check_epsilons(reachable_symbols, productions_old, productions_nf):
+def __check_epsilons(
+    reachable_symbols: AbstractSet[Variable],
+    productions_old: AbstractSet[Production],
+    productions_nf: AbstractSet[Production],
+):
     """
     Test whether all epsilons in reachable variables from initial grammar are present in given normal form
+
+    Parameters
+    ----------
+    reachable_symbols: AbstractSet[Variable]
+        Set of variables in cfg_nf
+    productions_old: AbstractSet[Production]
+        Old set of productions
+    productions_nf: AbstractSet[Production]
+
+    Returns
+    -------
+    bool:
+        true if all epsilons in reachable variables from initial grammar are present in given normal form
+        false otherwise
     """
     productions_old_with_epsilon = set(
         filter(
@@ -256,7 +275,7 @@ def __check_epsilons(reachable_symbols, productions_old, productions_nf):
     return True
 
 
-def is_wcnf(cfg_nf, cfg_old):
+def is_wcnf(cfg_nf: CFG, cfg_old: CFG) -> bool:
     """
     Test whether given cfg_nf is in Minimal Weakened Chomsky Normal Form
     The rules are:
@@ -264,6 +283,19 @@ def is_wcnf(cfg_nf, cfg_old):
     (2) A -> a, where A in Variables, a in Terminals
     (3) A -> epsilon, where A in Variables
     It is also checked whether every reachable epsilon production from original grammar is present in WNCF
+
+    Parameters
+    ----------
+    cfg_nf:
+        CFG to be checked
+    cfg_old:
+        Old version of CFG
+
+    Returns
+    -------
+    bool:
+        true if cfg_nf is in Minimal Weakened Chomsky Normal Form
+        false otherwise
     """
     for production in cfg_nf.productions:
         body = production.body
