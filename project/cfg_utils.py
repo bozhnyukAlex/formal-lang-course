@@ -9,7 +9,7 @@ __all__ = [
     "get_wcnf_from_file",
     "get_wcnf_from_text",
     "is_wcnf",
-    "get_original_csg_from_file",
+    "get_original_cfg_from_file",
 ]
 
 
@@ -92,7 +92,7 @@ def get_wcnf_from_file(path: str, start_symbol: str = None) -> CFG:
     return get_wcnf_from_text(cfg_str, start_symbol)
 
 
-def get_original_csg_from_file(path: str, start_symbol: str = None) -> CFG:
+def get_original_cfg_from_file(path: str, start_symbol: str = None) -> CFG:
     """
     Gets Context Free Grammar equivalent to file text representation of CFG.
 
