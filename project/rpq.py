@@ -34,7 +34,7 @@ def rpq(
     graph_bm = BooleanMatrices.from_automaton(
         graph_to_nfa(graph, start_nodes, final_nodes)
     )
-    query_bm = BooleanMatrices.from_automaton(regex_to_min_dfa(str(query)))
+    query_bm = BooleanMatrices.from_automaton(regex_to_min_dfa(query))
 
     intersected_bm = graph_bm.intersect(query_bm)
     intersected_start_states = intersected_bm.get_start_states()
