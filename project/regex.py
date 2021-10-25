@@ -1,7 +1,7 @@
 from pyformlang.finite_automaton import DeterministicFiniteAutomaton
 from pyformlang.regular_expression import Regex
 
-__all__ = ["regex_str_to_min_dfa", "regex_to_min_dfa"]
+__all__ = ["regex_str_to_min_dfa", "regex_to_min_dfa", "check_regex_equality"]
 
 
 def regex_str_to_min_dfa(regex_str: str) -> DeterministicFiniteAutomaton:
@@ -53,3 +53,21 @@ def regex_to_min_dfa(regex: Regex) -> DeterministicFiniteAutomaton:
     dfa = enfa.to_deterministic()
     dfa_min = dfa.minimize()
     return dfa_min
+
+
+def check_regex_equality(r1: Regex, r2: Regex):
+    """
+    Check whether regex r1 is equivalent to regex r2 (their languages are equal)
+    Parameters
+    ----------
+    r1: Regex
+        first regex
+    r2: Regex
+        second regex
+    Returns
+    -------
+    bool:
+        true if r1 is equivalent to r2
+        false otherwise
+    """
+    return regex_to_min_dfa(r1).is_equivalent_to(regex_to_min_dfa(r2))

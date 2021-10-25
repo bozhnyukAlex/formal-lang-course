@@ -3,9 +3,10 @@ from typing import AbstractSet, Iterable
 from pyformlang.cfg import Variable
 from pyformlang.regular_expression import Regex
 
-__all__ = ["ECFG", "InvalidECFGFormatException", "ECFGProduction"]
+__all__ = ["ECFG", "InvalidECFGException", "ECFGProduction", "ecfg_to_rsm"]
 
-from project import RSM, Box, regex_to_min_dfa
+from project import regex_to_min_dfa
+from project.rsm_utils import Box, RSM
 
 
 class ECFGProduction:
@@ -36,8 +37,23 @@ class ECFGProduction:
         return self._body
 
 
-class InvalidECFGFormatException(Exception):
-    pass
+class InvalidECFGException(Exception):
+    """
+    Exception raised for errors in the ECFG format.
+    Extended CFG:
+        - There is exactly one rule for each non-terminal.
+        - One line contains exactly one rule.
+        - Rule is non-terminal and regex over terminals and non-terminals accepted by pyformlang, separated by '->'.
+          For example: S -> a | b * S
+
+    Attributes
+    ----------
+    message: str
+        Explanation of the error
+    """
+
+    def __init__(self, message: str):
+        self.message = message
 
 
 class ECFG:
@@ -118,7 +134,7 @@ class ECFG:
 
             production_objects = line.split("->")
             if len(production_objects) != 2:
-                raise InvalidECFGFormatException(
+                raise InvalidECFGException(
                     "There should only be one production per line."
                 )
 
@@ -126,7 +142,7 @@ class ECFG:
             head = Variable(head_text.strip())
 
             if head in variables:
-                raise InvalidECFGFormatException(
+                raise InvalidECFGException(
                     "There should only be one production for each variable."
                 )
 

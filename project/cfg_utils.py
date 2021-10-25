@@ -10,11 +10,12 @@ __all__ = [
     "get_wcnf_from_text",
     "is_wcnf",
     "get_original_csg_from_file",
+    "cfg_to_ecfg",
 ]
 
 from pyformlang.regular_expression import Regex
 
-from project import ECFG, ECFGProduction
+from project.ecfg_utils import ECFGProduction, ECFG
 
 
 def get_cnf_from_file(path: str, start_symbol: str = None) -> CFG:
