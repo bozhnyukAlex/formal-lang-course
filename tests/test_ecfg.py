@@ -46,7 +46,7 @@ def test_ecfg_productions(cfg, exp_ecfg_productions):
             regex_to_min_dfa(exp_ecfg_productions[p.head])
         )
         for p in ecfg_productions
-    ) and len(ecfg_productions) == len(ecfg_productions)
+    ) and len(ecfg_productions) == len(exp_ecfg_productions)
 
 
 @pytest.mark.parametrize(
