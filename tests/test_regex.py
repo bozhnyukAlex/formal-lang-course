@@ -1,10 +1,10 @@
 from typing import Iterable, List
 
 import pytest
+from pyformlang.finite_automaton import Symbol
 from pyformlang.regular_expression import MisformedRegexError
 
-from project.regex import regex_to_min_dfa
-from pyformlang.finite_automaton import Symbol, DeterministicFiniteAutomaton, State
+from project.regex_utils import regex_to_min_dfa
 
 
 def test_regex_to_dfa_deterministic():
@@ -63,27 +63,8 @@ def test_wrong_regex():
         regex_to_min_dfa("*|wrong|*")
 
 
-def test_get_min_dfa() -> None:
-    expected_dfa = DeterministicFiniteAutomaton()
+def test_is_minimal():
+    dfa = regex_to_min_dfa("1* 0 0")
+    dfa_minimal = dfa.minimize()
 
-    state_0 = State(0)
-    state_1 = State(1)
-
-    symbol_a = Symbol("a")
-    symbol_l = Symbol("l")
-
-    expected_dfa.add_start_state(state_0)
-
-    expected_dfa.add_final_state(state_0)
-    expected_dfa.add_final_state(state_1)
-
-    expected_dfa.add_transition(state_0, symbol_a, state_0)
-    expected_dfa.add_transition(state_0, symbol_l, state_1)
-
-    expected_dfa.add_transition(state_1, symbol_l, state_1)
-
-    actual_dfa = regex_to_min_dfa("a* l*")
-
-    assert expected_dfa.is_equivalent_to(actual_dfa) and len(actual_dfa.states) == len(
-        expected_dfa.states
-    )
+    assert dfa.is_equivalent_to(dfa_minimal)
