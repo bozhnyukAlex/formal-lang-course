@@ -17,7 +17,7 @@ def test_saving_to_dot_nodes():
     pydot_graph = pydot.graph_from_dot_file("tests/data/test_nodes.dot")[0]
     graph = networkx.drawing.nx_pydot.from_pydot(pydot_graph)
     info = graphs.graph_info(graph)
-    assert info.nodes_count == 9
+    assert info.nodes_count == 8
 
 
 def test_saving_to_dot_labels():
