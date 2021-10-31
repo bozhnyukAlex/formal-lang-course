@@ -1,0 +1,6 @@
+ Expr -> Term | Expr AddOp Term | AddOp Term
+ Term -> Factor | Term MulOp Factor
+ Factor -> Primary | Factor pow Primary
+ Primary -> number | variable
+ AddOp -> add | sub
+ MulOp -> mul | div
