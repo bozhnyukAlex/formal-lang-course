@@ -18,3 +18,6 @@ from project.rpq import *
 
 import project.cfg_utils
 from project.cfg_utils import *
+
+import project.cyk
+from project.cyk import *
