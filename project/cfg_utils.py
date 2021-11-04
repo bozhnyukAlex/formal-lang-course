@@ -10,7 +10,12 @@ __all__ = [
     "get_wcnf_from_text",
     "is_wcnf",
     "get_original_cfg_from_file",
+    "cfg_to_ecfg",
 ]
+
+from pyformlang.regular_expression import Regex
+
+from project.ecfg_utils import ECFGProduction, ECFG
 
 
 def get_cnf_from_file(path: str, start_symbol: str = None) -> CFG:
@@ -311,3 +316,37 @@ def is_wcnf(cfg_nf: CFG, cfg_old: CFG) -> bool:
         ):
             return False
     return True
+
+
+def cfg_to_ecfg(cfg: CFG) -> ECFG:
+    """
+    This function converts a CFG to an Extended CFG
+
+    Parameters
+    ---------
+    cfg: CFG
+        CFG to convert
+
+    Returns
+    -------
+    ECFG:
+        Extended CFG from CFG
+    """
+    productions = dict()
+
+    for p in cfg.productions:
+        body = Regex(" ".join(cfg_obj.value for cfg_obj in p.body) if p.body else "$")
+        if p.head not in productions:
+            productions[p.head] = body
+        else:
+            productions[p.head] = productions.get(p.head).union(body)
+
+    ecfg_productions = [
+        ECFGProduction(head, body) for head, body in productions.items()
+    ]
+
+    return ECFG(
+        variables=cfg.variables,
+        start_symbol=cfg.start_symbol,
+        productions=ecfg_productions,
+    )
