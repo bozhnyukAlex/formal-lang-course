@@ -3,7 +3,7 @@ from typing import Iterable, List
 import pytest
 from pyformlang.regular_expression import MisformedRegexError
 
-from project.regex import regex_str_to_min_dfa
+from project.regex_utils import regex_str_to_min_dfa
 from pyformlang.finite_automaton import Symbol, DeterministicFiniteAutomaton, State
 
 
