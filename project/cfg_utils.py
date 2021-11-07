@@ -339,7 +339,23 @@ def cfg_to_ecfg(cfg: CFG) -> ECFG:
 
 
 def cfg_to_wcnf(cfg: CFG) -> CFG:
-    """Converts a CFG to the Weak Chomsky Normal Form"""
+    """
+    Converts a CFG to the Weak Chomsky Normal Form
+    The rules are:
+    (1) A -> BC, where A, B, C in Variables
+    (2) A -> a, where A in Variables, a in Terminals
+    (3) A -> epsilon, where A in Variables
+    It is also checked whether every reachable epsilon production from original grammar is present in WNCF
+    Parameters
+    ----------
+    cfg:
+        CFG to сonvert
+
+    Returns
+    -------
+    CFG:
+        cfg in Weak Chomsky Normal Form
+    """
     cleared_cfg = (
         cfg.remove_useless_symbols()
         .eliminate_unit_productions()

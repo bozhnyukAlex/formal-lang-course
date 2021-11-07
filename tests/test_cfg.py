@@ -5,7 +5,6 @@ from project.cfg_utils import (
     get_cnf_from_file,
     get_wcnf_from_file,
     is_wcnf,
-    get_original_cfg_from_file,
 )
 
 

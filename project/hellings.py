@@ -8,6 +8,22 @@ __all__ = ["hellings", "cfpq"]
 
 
 def hellings(graph: nx.MultiDiGraph, cfg: CFG) -> Set[Tuple[int, str, int]]:
+    """
+    Hellings algorithm for solving Context-Free Path Querying problem
+    for given graph and cfg
+
+    Parameters
+    ----------
+    graph: nx.MultiDiGraph
+        input graph
+    cfg: CFG
+        input cfg
+
+    Returns
+    -------
+    Set[Tuple[int, str, int]]:
+        set tuples (node, terminal, node)
+    """
     wcnf = cfg if is_wcnf(cfg) else cfg_to_wcnf(cfg)
 
     eps_prod_heads = [p.head.value for p in wcnf.productions if not p.body]
@@ -63,7 +79,28 @@ def cfpq(
     final_nodes: Set[int] = None,
     start_var: Variable = Variable("S"),
 ) -> Set[Tuple[int, int]]:
-    """Context-Free Path Querying based on Hellings Algorithm"""
+    """
+    Context-Free Path Querying based on Hellings Algorithm
+    for given graph, cfg, start nodes (optional), final nodes (optional), start variable
+
+    Parameters
+    ----------
+    graph: nx.MultiDiGraph
+        input graph
+    cfg: CFG
+        input CFG
+    start_nodes: Set[int]
+        set of start nodes in given graph
+    final_nodes: Set[int]
+        set of final nodes in given graph
+    start_var: Variable
+        start variable in CFG
+
+    Returns
+    -------
+    Set[Tuple[int, int]]:
+        set of tuples (node, node) - answer to the CFPQ-problem
+    """
     cfg._start_symbol = start_var
     wcnf = cfg_to_wcnf(cfg)
     reach_pairs = {
