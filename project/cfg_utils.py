@@ -281,9 +281,9 @@ def __check_epsilons(
     return True
 
 
-def is_wcnf(cfg_nf: CFG, cfg_old: CFG) -> bool:
+def is_wcnf(cfg: CFG) -> bool:
     """
-    Test whether given cfg_nf is in Minimal Weakened Chomsky Normal Form
+    Test whether given cfg is in Minimal Weakened Chomsky Normal Form
     The rules are:
     (1) A -> BC, where A, B, C in Variables
     (2) A -> a, where A in Variables, a in Terminals
@@ -292,31 +292,16 @@ def is_wcnf(cfg_nf: CFG, cfg_old: CFG) -> bool:
 
     Parameters
     ----------
-    cfg_nf:
+    cfg:
         CFG to be checked
-    cfg_old:
-        Old version of CFG
 
     Returns
     -------
     bool:
-        true if cfg_nf is in Minimal Weakened Chomsky Normal Form
+        true if cfg is in Minimal Weakened Chomsky Normal Form
         false otherwise
     """
-    for production in cfg_nf.productions:
-        body = production.body
-        if not (
-            # check (1)
-            (len(body) <= 2 and all(map(lambda x: x in cfg_nf.variables, body)))
-            # check (2)
-            or (len(body) == 1 and body[0] in cfg_nf.terminals)
-            # check (3)
-            or (not body)
-        ) or not __check_epsilons(
-            cfg_nf.variables, cfg_old.productions, cfg_nf.productions
-        ):
-            return False
-    return True
+    return all(p.is_normal_form() if p.body else True for p in cfg.productions)
 
 
 def cfg_to_ecfg(cfg: CFG) -> ECFG:
