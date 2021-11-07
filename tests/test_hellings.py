@@ -1,8 +1,14 @@
+from collections import namedtuple
+from itertools import product
+
 import pytest
+from cfpq_data import labeled_cycle_graph
 from pyformlang.cfg import CFG
 
-from project import hellings, generate_two_cycles_graph, cfpq
-from cfpq_data import labeled_cycle_graph
+from project import generate_two_cycles_graph, cfpq
+from project import hellings
+
+Config = namedtuple("Config", ["start_var", "start_nodes", "final_nodes", "exp_ans"])
 
 
 @pytest.mark.parametrize(
@@ -64,9 +70,6 @@ from cfpq_data import labeled_cycle_graph
 )
 def test_hellings_answer(cfg, graph, exp_ans):
     assert hellings(graph, CFG.from_text(cfg)) == exp_ans
-
-
-Config = namedtuple("Config", ["start_var", "start_nodes", "final_nodes", "exp_ans"])
 
 
 @pytest.mark.parametrize(
