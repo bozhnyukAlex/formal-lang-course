@@ -11,6 +11,7 @@ __all__ = [
     "is_wcnf",
     "get_original_cfg_from_file",
     "cfg_to_ecfg",
+    "cfg_to_wcnf",
 ]
 
 from pyformlang.regular_expression import Regex
@@ -350,3 +351,15 @@ def cfg_to_ecfg(cfg: CFG) -> ECFG:
         start_symbol=cfg.start_symbol,
         productions=ecfg_productions,
     )
+
+
+def cfg_to_wcnf(cfg: CFG) -> CFG:
+    """Converts a CFG to the Weak Chomsky Normal Form"""
+    cleared_cfg = (
+        cfg.remove_useless_symbols()
+        .eliminate_unit_productions()
+        .remove_useless_symbols()
+    )
+    cleared_productions = cleared_cfg._get_productions_with_only_single_terminals()
+    cleared_productions = cleared_cfg._decompose_productions(cleared_productions)
+    return CFG(start_symbol=cleared_cfg.start_symbol, productions=cleared_productions)
