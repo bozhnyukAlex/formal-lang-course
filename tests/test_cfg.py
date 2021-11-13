@@ -5,7 +5,6 @@ from project.cfg_utils import (
     get_cnf_from_file,
     get_wcnf_from_file,
     is_wcnf,
-    get_original_cfg_from_file,
 )
 
 
@@ -110,7 +109,6 @@ def test_cnf_from_file_productions(filename, axiom, productions):
 def test_get_wcnf_from_file(filename, axiom):
     path = "tests/data/cfgs/" + filename
 
-    cfg_old = get_original_cfg_from_file(path, axiom)
     cnf = get_cnf_from_file(path, axiom)
 
-    assert is_wcnf(cnf, cfg_old)
+    assert is_wcnf(cnf)
