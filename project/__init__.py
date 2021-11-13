@@ -21,3 +21,6 @@ from project.cfg_utils import *
 
 import project.hellings
 from project.hellings import *
+
+import project.cyk
+from project.cyk import *
