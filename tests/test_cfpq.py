@@ -5,10 +5,15 @@ import pytest
 from cfpq_data import labeled_cycle_graph
 from pyformlang.cfg import CFG
 
-from project import generate_two_cycles_graph, cfpq
+from project import generate_two_cycles_graph, matrix_cfpq, hellings_cfpq
 from project import hellings
 
 Config = namedtuple("Config", ["start_var", "start_nodes", "final_nodes", "exp_ans"])
+
+
+@pytest.fixture(params=[matrix_cfpq, hellings_cfpq])
+def cfpq(request):
+    return request.param
 
 
 @pytest.mark.parametrize(
@@ -118,7 +123,7 @@ def test_hellings_answer(cfg, graph, exp_ans):
         ),
     ],
 )
-def test_cfpq_answer(cfg, graph, confs):
+def test_cfpq_answer(cfpq, cfg, graph, confs):
     assert all(
         cfpq(
             graph,
