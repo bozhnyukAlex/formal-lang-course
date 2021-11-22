@@ -19,11 +19,11 @@ from project.rpq import *
 import project.cfg_utils
 from project.cfg_utils import *
 
-import project.hellings
-from project.hellings import *
-
 import project.cyk
 from project.cyk import *
+
+import project.cfpq_algorithms
+from project.cfpq_algorithms import *
 
 import project.cfpq
 from project.cfpq import *
