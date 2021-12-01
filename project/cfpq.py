@@ -49,7 +49,7 @@ def hellings_cfpq(
 ) -> Set[Tuple[int, int]]:
     """
     Context-Free Path Querying based on Hellings Algorithm
-    for given graph, cfg, start nodes (optional), final nodes (optional), start variable
+    for given graph, CFG, start nodes (optional), final nodes (optional), start variable
 
     Parameters
     ----------
