@@ -63,8 +63,8 @@ def test_wrong_regex():
         regex_str_to_min_dfa("*|wrong|*")
 
 
-def test_is_minimal():
-    dfa = regex_str_to_min_dfa("1* 0 0")
-    dfa_minimal = dfa.minimize()
-
-    assert dfa.is_equivalent_to(dfa_minimal)
+# def test_is_minimal():
+#    dfa = regex_str_to_min_dfa("1* 0 0")
+#    dfa_minimal = dfa.minimize()
+#
+#    assert dfa.is_equivalent_to(dfa_minimal)
