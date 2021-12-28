@@ -247,84 +247,169 @@ _____________________________________
 
 ### Описание конкретного синтаксиса языка
 ```
-PROGRAM -> STMT ; PROGRAM | eps
-STMT -> VAR = EXPR | Print(EXPR)
-LOWERCASE -> [a-z]
-UPPERCASE -> [A-Z]
+program -> (stmt SEMI EOL?)+
+
+stmt -> PRINT expr
+      | var ASSIGN expr
+
+expr -> LP expr RP
+      | anfunc
+      | mapping
+      | filtering
+      | var
+      | val
+      | NOT expr
+      | expr IN expr
+      | expr AND expr
+      | expr DOT expr
+      | expr OR expr
+      | expr KLEENE
+
+
+graph -> load_graph
+       | cfg
+       | string
+       | set_start
+       | set_final
+       | add_start
+       | add_final
+       | LP graph RP
+
+load_graph -> LOAD GRAPH path
+set_start -> SET START OF (graph | var) TO (vertices | var)
+set_final -> SET FINAL OF (graph | var) TO (vertices | var)
+add_start -> ADD START OF (graph | var) TO (vertices | var)
+add_final -> ADD FINAL OF (graph | var) TO (vertices | var)
+
+vertices -> vertex
+          | vertices_range
+          | vertices_set
+          | get_reachable
+          | get_final
+          | get_start
+          | get_vertices
+          | LP vertices RP
+
+vertex -> INT
+
+edges -> edge
+       | edges_set
+       | get_edges
+
+edge -> LP vertex COMMA label COMMA vertex RP
+      | LP vertex COMMA vertex RP
+
+labels -> label
+        | labels_set
+        | get_labels
+
+label -> string
+
+anfunc -> LAMBDA variables COLON expr
+        | LP anfunc RP
+
+mapping -> MAP anfunc expr
+filtering -> FILTER anfunc expr
+
+get_edges -> GET EDGES FROM (graph | var)
+get_labels -> GET LABELS FROM (graph | var)
+get_reachable -> GET REACHABLE VERTICES FROM (graph | var)
+get_final -> GET FINAL VERTICES FROM (graph | var)
+get_start -> GET START VERTICES FROM (graph | var)
+get_vertices -> GET VERTICES FROM (graph | var)
+vertices_range -> LCB INT DOT DOT INT RCB
+
+cfg -> CFG
+string -> STRING
+path -> STRING
+
+vertices_set -> LCB (INT COMMA)* (INT)? RCB
+              | vertices_range
+
+labels_set -> LCB (STRING COMMA)* (STRING)? RCB
+
+edges_set -> LCB (edge COMMA)* (edge)? RCB
+var -> VAR
+
+var_edge -> LP var COMMA var RP
+          | LP var COMMA var COMMA var RP
+          | LP LP var COMMA var RP COMMA var COMMA LP var COMMA var RP RP
+
+variables -> (var COMMA)* var? | var_edge
+
+val -> boolean
+     | graph
+     | edges
+     | labels
+     | vertices
+
+
+boolean -> BOOL
+
+LAMBDA -> 'LAMBDA'
+LOAD -> 'LOAD'
+SET -> 'SET'
+ADD -> 'ADD'
+OF -> 'OF'
+TO -> 'TO'
+GRAPH -> 'GRAPH'
+VERTICES -> 'VERTICES'
+LABELS -> 'LABELS'
+GET -> 'GET'
+EDGES -> 'EDGES'
+REACHABLE -> 'REACHABLE'
+START -> 'START'
+FINAL -> 'FINAL'
+FROM -> 'FROM'
+FILTER -> 'FILTER'
+MAP -> 'MAP'
+PRINT -> 'PRINT'
+BOOL -> TRUE | FALSE
+TRUE -> 'TRUE'
+FALSE -> 'FALSE'
+
+VAR -> ('_' | CHAR) ID_CHAR*
+
+ASSIGN -> '='
+AND -> '&'
+OR -> '|'
+NOT -> 'NOT'
+IN -> 'IN'
+KLEENE -> '*'
+DOT -> '.'
+COMMA -> ','
+SEMI -> ';'
+LCB -> '{'
+RCB -> '}'
+LB -> '['
+RB -> ']'
+LP -> '('
+RP -> ')'
+QUOT -> '"'
+TRIPLE_QUOT -> '"""'
+COLON -> ':'
+ARROW -> '->'
+
+INT -> NONZERO_DIGIT DIGIT* | '0'
+CFG -> TRIPLE_QUOT (CHAR | DIGIT | ' ' | '\n' | ARROW)* TRIPLE_QUOT
+STRING -> QUOT (CHAR | DIGIT | '_' | ' ')* QUOT
+ID_CHAR -> (CHAR | DIGIT | '_')
+CHAR -> [a-z] | [A-Z]
+NONZERO_DIGIT -> [1-9]
 DIGIT -> [0-9]
-INT -> 0 | [1-9] DIGIT*
-STRING -> (_ | . | LOWERCASE | UPPERCASE) (_ | . | LOWERCASE | UPPERCASE | DIGIT)*
-BOOL -> True | False
-PATH -> " (/ | _ | . | LOWERCASE | UPPERCASE | DIGIT)+ "
-VAR -> STRING
-VAL ->
-    INT
-    | " STRING "
-    | BOOL
-    | PATH
-    | LIST<INT>
-    | LIST<" STRING ">
-    | LIST<BOOL>
-SET ->
-    SET<INT>
-    | SET<" STRING ">
-    | Range ( INT , INT )
-    | Int . . . Int
-EXPR -> VAR | VAL | GRAPH
-GRAPH -> " STRING "
-        | SetStart(SET, GRAPH)
-        | SetFinal(SET, GRAPH)
-        | AddStart(SET, GRAPH)
-        | AddFinal(SET, GRAPH)
-EXPR -> VERTEX | VERTICES
-VERTEX -> INT
-VERTICES -> SET<VERTEX>
-            | Range ( INT , INT )
-            | Int . . . Int
-            | GetStart(GRAPH)
-            | GetFinal(SET, GRAPH)
-EXPR -> PAIR_OF_VERTICES
-PAIR_OF_VERTICES -> SET<(INT, INT)>
-PAIR_OF_VERTICES -> GetReachable(GRAPH)
-VERTICES -> GetVertices(GRAPH)
-EXPR -> EDGE | EDGES
-EDGE -> (INT, " STRING ", INT) | (INT, INT, INT)
-EDGES -> SET<EDGE> | GetEdges(GRAPH)
-EXPR -> LABELS
-LABELS -> SET<INT> | SET<" STRING ">
-        | GetLabels(GRAPH)
-EXPR -> Map(LAMBDA, EXPR)
-EXPR -> Filter(LAMBDA, EXPR)
-GRAPH -> LoadGraph(" PATH ")
-         | Intersect(GRAPH, GRAPH)
-         | Concat(GRAPH, GRAPH)
-         | Union(GRAPH, GRAPH)
-         | Star(GRAPH, GRAPH)
-LAMBDA -> (LIST<VAR> -> [BOOL_EXPR | EXPR])
-BOOL_EXPR ->
-    BOOL_EXPR or BOOL_EXPR
-    | BOOL_EXPR and BOOL_EXPR
-    | not BOOL_EXPR
-    | BOOL
-    | HasLabel(EDGE, " STRING ")
-    | IsStart(VERTEX)
-    | IsFinal(VERTEX)
-    | X in SET<X>
-LIST<X> -> List(X [, X]*) | List()
-SET<X> -> Set(X [, X]*) | Set()
+WS -> [ \t\r]+
+EOL -> [\n]+
+
 ```
 
 ### Пример программы
+Данный скрипт загружает граф "geospecies", задает стартовые и финальные вершины, создает запрос, выполняет пересечение
+и печатает результат.
 ```
-g = Load("geospecies")
-h = SetStart(SetFinal(GetVertices(g), g)), 1...100)
-l1 = Union("l1", "l2")
-q1 = Star(Union("type", l1))
-q2 = Concat("sub_class_of", l1)
-res1 = Intersect(g, q1)
-res2 = Intersect(g, q2)
-Print(res1)
-s = GetStart(g)
-vertices = Filter((list(v) -> v in s), GetEdges(res1))
-Print(vertices)
+G = LOAD GRAPH "geospecies";
+H = SET START OF (SET FINAL OF G TO (GET VERTICES FROM G)) TO {1...100};
+L1 = "L1" | "L2"
+Q = ("type" | l1)*;
+RES = G & Q;
+PRINT RES;
 ```
