@@ -24,18 +24,6 @@ from project.rsm_utils import Box
                 """,
             {Variable("S"): Regex("(a S b S) | $")},
         ),
-        (
-            """
-                S -> i f ( C ) t h e n { ST } e l s e { ST }
-                C -> t r u e | f a l s e
-                ST -> p a s s | S
-                """,
-            {
-                Variable("S"): Regex("i f ( C ) t h e n { ST } e l s e { ST }"),
-                Variable("C"): Regex("t r u e | f a l s e"),
-                Variable("ST"): Regex("p a s s | S"),
-            },
-        ),
     ],
 )
 def test_ecfg_productions(cfg, exp_ecfg_productions):
