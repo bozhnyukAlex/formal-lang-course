@@ -24,12 +24,21 @@ class BooleanMatrices:
         Mapping of states to their indices
     """
 
-    def __init__(self):
-        self.num_states = 0
-        self.start_states = set()
-        self.final_states = set()
-        self.bool_matrices = {}
-        self.state_indexes = {}
+    def __init__(self, n_automaton: NondeterministicFiniteAutomaton = None):
+        if n_automaton is None:
+            self.num_states = 0
+            self.start_states = set()
+            self.final_states = set()
+            self.bool_matrices = {}
+            self.state_indexes = {}
+        else:
+            self.states_count = len(n_automaton.states)
+            self.state_indices = {
+                state: index for index, state in enumerate(n_automaton.states)
+            }
+            self.start_states = n_automaton.start_states
+            self.final_states = n_automaton.final_states
+            self.bool_matrices = self._create_boolean_matrices(n_automaton)
 
     def to_automaton(self):
         """

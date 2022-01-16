@@ -9,6 +9,8 @@ __all__ = [
     "generate_two_cycles_graph",
     "graph_to_nfa",
     "GraphException",
+    "add_states_to_nfa",
+    "replace_nfa_states",
 ]
 
 from networkx import MultiDiGraph
@@ -157,3 +159,41 @@ def graph_to_nfa(
         nfa.add_final_state(State(state))
 
     return nfa
+
+
+def replace_nfa_states(
+    nfa: NondeterministicFiniteAutomaton,
+    start_states: set = None,
+    final_states: set = None,
+) -> NondeterministicFiniteAutomaton:
+    new_nfa = nfa.copy()
+    new_nfa._start_states = set()
+    new_nfa._final_states = set()
+
+    if start_states:
+        for state in start_states:
+            new_nfa.add_start_state(state)
+
+    if final_states:
+        for state in final_states:
+            new_nfa.add_final_state(state)
+
+    return new_nfa
+
+
+def add_states_to_nfa(
+    nfa: NondeterministicFiniteAutomaton,
+    start_states: set = None,
+    final_states: set = None,
+) -> NondeterministicFiniteAutomaton:
+    new_nfa = nfa.copy()
+
+    if start_states:
+        for state in start_states:
+            new_nfa.add_start_state(state)
+
+    if final_states:
+        for state in final_states:
+            new_nfa.add_final_state(state)
+
+    return new_nfa
