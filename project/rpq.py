@@ -1,7 +1,49 @@
+from typing import Tuple, Set
+
 import networkx as nx
 from pyformlang.regular_expression import Regex
 
 from project import regex_to_min_dfa, graph_to_nfa, BooleanMatrices
+
+__all__ = ["rpq", "get_reachable"]
+
+
+def get_reachable(
+    bmatrix: BooleanMatrices, query_bm: BooleanMatrices = None
+) -> Set[Tuple[int, int]]:
+    """
+    Parameters
+    ----------
+    bmatrix: BooleanMatrices
+        Boolean matrix object
+    query_bm: BooleanMatrices
+        Query boolean matrix object
+    Returns
+    -------
+        reachable: Set[Tuple[int, int]]
+            All reachable nodes, according to start and final states
+    """
+    transitive_closure = bmatrix.transitive_closure()
+
+    start_states = bmatrix.get_start_states()
+    final_states = bmatrix.get_final_states()
+
+    result_set = set()
+
+    for state_from, state_to in zip(*transitive_closure.nonzero()):
+        if state_from in start_states and state_to in final_states:
+            result_set.add(
+                (
+                    state_from // query_bm.states_count
+                    if query_bm is not None
+                    else bmatrix.states_count,
+                    state_to // query_bm.states_count
+                    if query_bm is not None
+                    else bmatrix.states_count,
+                )
+            )
+
+    return result_set
 
 
 def rpq(
@@ -9,7 +51,7 @@ def rpq(
     query: Regex,
     start_nodes: set = None,
     final_nodes: set = None,
-) -> set:
+):
     """
     This function solves Regular Path Querying problem for
     giving graph, regex query with possibility of input start and final nodes
@@ -37,13 +79,4 @@ def rpq(
     query_bm = BooleanMatrices.from_automaton(regex_to_min_dfa(query))
 
     intersected_bm = graph_bm.intersect(query_bm)
-    intersected_start_states = intersected_bm.get_start_states()
-    intersected_final_states = intersected_bm.get_final_states()
-    transitive_closure = intersected_bm.transitive_closure()
-    res = set()
-
-    for s_from, s_to in zip(*transitive_closure.nonzero()):
-        if s_from in intersected_start_states and s_to in intersected_final_states:
-            res.add((s_from // query_bm.num_states, s_to // query_bm.num_states))
-
-    return res
+    return get_reachable(intersected_bm, query_bm)
