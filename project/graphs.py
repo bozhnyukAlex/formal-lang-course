@@ -11,6 +11,7 @@ __all__ = [
     "GraphException",
     "add_states_to_nfa",
     "replace_nfa_states",
+    "get_graph",
 ]
 
 from networkx import MultiDiGraph
@@ -57,6 +58,30 @@ class GraphInfo:
         Nodes count: {str(self.nodes_count)}
         Labels: {str(self.labels)}
     """
+
+
+def get_graph(graph_name) -> MultiDiGraph:
+    """
+    Get graph by name
+
+    Parameters
+    ----------
+    graph_name: str
+        Name of graph
+    Returns
+    -------
+    MultiDiGraph
+        Result graph
+
+    """
+    if all(
+        graph_name not in cfpq_data.DATASET[graph_from_ds].keys()
+        for graph_from_ds in cfpq_data.DATASET.keys()
+    ):
+        raise Exception("Graph with this name does not found in dataset.")
+
+    graph = cfpq_data.graph_from_dataset(graph_name, verbose=False)
+    return graph
 
 
 def graph_info(graph: nx.MultiDiGraph) -> GraphInfo:
@@ -159,6 +184,30 @@ def graph_to_nfa(
         nfa.add_final_state(State(state))
 
     return nfa
+
+
+def get_graph_info_util(graph_name) -> GraphInfo:
+    """
+    Provides and prints information about graph
+    Parameters
+    ----------
+    graph_name: str
+        Name of the graph
+    Returns
+    -------
+    GraphInfo
+        Object with information about graph
+    Raises
+    ------
+    Exception
+        If graph does not found in dataset
+    """
+
+    graph = get_graph(graph_name)
+
+    gr_info = graph_info(graph)
+
+    return gr_info
 
 
 def replace_nfa_states(
