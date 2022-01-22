@@ -10,10 +10,10 @@ from tests.graph_query_language.interpreter.interpreter import interpreter_with_
 @pytest.mark.parametrize(
     "bool_expr, expected",
     [
-        ("true & false", False),
-        ("true & true", True),
-        ("false & true", False),
-        ("false & false", False),
+        ("TRUE & FALSE", False),
+        ("TRUE & TRUE", True),
+        ("FALSE & TRUE", False),
+        ("FALSE & FALSE", False),
     ],
 )
 def test_bool_intersect(bool_expr, expected):
@@ -23,10 +23,10 @@ def test_bool_intersect(bool_expr, expected):
 @pytest.mark.parametrize(
     "bool_expr, expected",
     [
-        ("true | false", True),
-        ("true | true", True),
-        ("false | true", True),
-        ("false | false", False),
+        ("TRUE | FALSE", True),
+        ("TRUE | TRUE", True),
+        ("FALSE | TRUE", True),
+        ("FALSE | FALSE", False),
     ],
 )
 def test_bool_union(bool_expr, expected):
@@ -36,8 +36,8 @@ def test_bool_union(bool_expr, expected):
 @pytest.mark.parametrize(
     "bool_expr, expected",
     [
-        ("not true", False),
-        ("not false", True),
+        ("NOT TRUE", False),
+        ("NOT FALSE", True),
     ],
 )
 def test_bool_inverse(bool_expr, expected):
@@ -47,11 +47,11 @@ def test_bool_inverse(bool_expr, expected):
 @pytest.mark.parametrize(
     "bool_expr",
     [
-        "true . true",
-        "true . false",
-        "false . true",
-        "false . false",
-        "true *",
+        "TRUE . TRUE",
+        "TRUE . FALSE",
+        "FALSE . TRUE",
+        "FALSE . FALSE",
+        "TRUE *",
     ],
 )
 def test_bool_unsupported(bool_expr):
