@@ -85,3 +85,8 @@ def test_set_type_error(set_expr):
 def test_vertices_range(range_expr, expected):
     actual_set = interpreter_with_value(range_expr, "vertices_range")
     assert actual_set.data == Set(expected).data
+
+
+def test_set_type_consistency():
+    with pytest.raises(GQLTypeError):
+        Set.fromSet({1, "1"})
