@@ -1,0 +1,6 @@
+G1 = LOAD "skos";
+G2 = LOAD "travel";
+G1_Labels = GET LABELS FROM g1;
+G2_Labels = GET LABELS FROM g2;
+Filter_Labels = FILTER (LAMBDA Label: Label in G2_Labels) G1_Labels;
+PRINT Filter_Labels;
