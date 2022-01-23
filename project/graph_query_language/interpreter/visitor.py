@@ -165,37 +165,33 @@ class Visitor(GraphQueryLanguageVisitor):
     def _get_graph_nodes(
         self,
         ctx: Union[
-            GraphQueryLanguageParser.Select_startContext,
-            GraphQueryLanguageParser.Select_finalContext,
-            GraphQueryLanguageParser.Select_labelsContext,
-            GraphQueryLanguageParser.Select_edgesContext,
-            GraphQueryLanguageParser.Select_verticesContext,
+            GraphQueryLanguageParser.Get_startContext,
+            GraphQueryLanguageParser.Get_finalContext,
+            GraphQueryLanguageParser.Get_labelsContext,
+            GraphQueryLanguageParser.Get_edgesContext,
+            GraphQueryLanguageParser.Get_verticesContext,
         ],
         method,
     ):
         graph = self.visit(ctx.var()) if ctx.var() else self.visit(ctx.graph())
         return getattr(graph, method)
 
-    def visitSelect_start(self, ctx: GraphQueryLanguageParser.Select_startContext):
+    def visitGet_start(self, ctx: GraphQueryLanguageParser.Get_startContext):
         return self._get_graph_nodes(ctx, method="start")
 
-    def visitSelect_final(self, ctx: GraphQueryLanguageParser.Select_finalContext):
+    def visitGet_final(self, ctx: GraphQueryLanguageParser.Get_finalContext):
         return self._get_graph_nodes(ctx, method="final")
 
-    def visitSelect_labels(self, ctx: GraphQueryLanguageParser.Select_labelsContext):
+    def visitGet_labels(self, ctx: GraphQueryLanguageParser.Get_labelsContext):
         return self._get_graph_nodes(ctx, method="labels")
 
-    def visitSelect_edges(self, ctx: GraphQueryLanguageParser.Select_edgesContext):
+    def visitGet_edges(self, ctx: GraphQueryLanguageParser.Get_edgesContext):
         return self._get_graph_nodes(ctx, method="edges")
 
-    def visitSelect_vertices(
-        self, ctx: GraphQueryLanguageParser.Select_verticesContext
-    ):
+    def visitGet_vertices(self, ctx: GraphQueryLanguageParser.Get_verticesContext):
         return self._get_graph_nodes(ctx, method="vertices")
 
-    def visitSelect_reachable(
-        self, ctx: GraphQueryLanguageParser.Select_reachableContext
-    ):
+    def visitGet_reachable(self, ctx: GraphQueryLanguageParser.Get_reachableContext):
         graph = self.visit(ctx.var()) if ctx.var() else self.visit(ctx.graph())
         return graph.get_reachable()
 
