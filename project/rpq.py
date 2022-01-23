@@ -34,12 +34,12 @@ def get_reachable(
         if state_from in start_states and state_to in final_states:
             result_set.add(
                 (
-                    state_from // query_bm.states_count
+                    state_from // query_bm.num_states
                     if query_bm is not None
-                    else bmatrix.states_count,
-                    state_to // query_bm.states_count
+                    else bmatrix.num_states,
+                    state_to // query_bm.num_states
                     if query_bm is not None
-                    else bmatrix.states_count,
+                    else bmatrix.num_states,
                 )
             )
 
