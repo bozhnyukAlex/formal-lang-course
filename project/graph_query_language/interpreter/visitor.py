@@ -3,6 +3,7 @@ from collections import namedtuple
 from typing import Union
 
 from antlr4 import ParserRuleContext
+from project.graph_query_language.interpreter.gql_types.gql_cfq import GqlCFG
 
 from project.graph_query_language.generated.GraphQueryLanguageParser import (
     GraphQueryLanguageParser,
@@ -19,7 +20,6 @@ from project.graph_query_language.interpreter.gql_types.base_automata import (
 )
 from project.graph_query_language.interpreter.gql_types.base_type import BaseType
 from project.graph_query_language.interpreter.gql_types.bool import Bool
-from project.graph_query_language.interpreter.gql_types.rsm import RSM
 from project.graph_query_language.interpreter.gql_types.finite_automata import (
     FiniteAutomata,
 )
@@ -243,6 +243,6 @@ class Visitor(GraphQueryLanguageVisitor):
     def visitVar_edge(self, ctx: GraphQueryLanguageParser.Var_edgeContext):
         pass
 
-    def visitCfg(self, ctx: GraphQueryLanguageParser.CfgContext) -> RSM:
+    def visitCfg(self, ctx: GraphQueryLanguageParser.CfgContext) -> GqlCFG:
         cfg_text = ctx.CFG().getText().strip('"""')
-        return RSM.fromText(cfg_text)
+        return GqlCFG.fromText(cfg_text)
