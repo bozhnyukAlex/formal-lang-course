@@ -93,11 +93,11 @@ def test_set_type_consistency():
 @pytest.mark.parametrize(
     "set_expr, expected",
     [
-        ("11 in {11..14}", True),
-        ("2 in {1, 2, 3}", True),
-        ("5 in {11..14}", False),
-        ("5 in {1, 2, 3}", False),
-        ("2 in {}", False),
+        ("11 IN {11..14}", True),
+        ("2 IN {1, 2, 3}", True),
+        ("5 IN {11..14}", False),
+        ("5 IN {1, 2, 3}", False),
+        ("2 IN {}", False),
     ],
 )
 def test_set_find(set_expr, expected):
