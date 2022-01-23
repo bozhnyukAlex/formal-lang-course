@@ -230,6 +230,10 @@ class FiniteAutomata(BaseAutomata):
         nfa = replace_nfa_states(self.nfa, final_states=final_states.data)
         return FiniteAutomata(nfa)
 
+    def add_start(self, start_states: Set) -> "FiniteAutomata":
+        nfa = add_states_to_nfa(self.nfa, start_states=start_states.data)
+        return FiniteAutomata(nfa)
+
     def add_final(self, final_states: Set) -> "FiniteAutomata":
         nfa = add_states_to_nfa(self.nfa, final_states=final_states.data)
         return FiniteAutomata(nfa)

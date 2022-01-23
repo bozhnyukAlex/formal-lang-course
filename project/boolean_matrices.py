@@ -36,8 +36,8 @@ class BooleanMatrices:
             self.state_indexes = {}
             self.states_to_box_variable = {}
         else:
-            self.states_count = len(n_automaton.states)
-            self.state_indices = {
+            self.num_states = len(n_automaton.states)
+            self.state_indexes = {
                 state: index for index, state in enumerate(n_automaton.states)
             }
             self.start_states = n_automaton.start_states
@@ -105,24 +105,24 @@ class BooleanMatrices:
             Recursive State Machine
         """
         bm = cls()
-        bm.states_count = sum(len(box.dfa.states) for box in rsm.boxes)
+        bm.num_states = sum(len(box.dfa.states) for box in rsm.boxes)
         box_idx = 0
         for box in rsm.boxes:
             for idx, state in enumerate(box.dfa.states):
                 new_name = bm._rename_rsm_box_state(state, box.variable)
-                bm.state_indices[new_name] = idx + box_idx
+                bm.state_indexes[new_name] = idx + box_idx
                 if state in box.dfa.start_states:
-                    bm.start_states.add(bm.state_indices[new_name])
+                    bm.start_states.add(bm.state_indexes[new_name])
                 if state in box.dfa.final_states:
-                    bm.final_states.add(bm.state_indices[new_name])
+                    bm.final_states.add(bm.state_indexes[new_name])
 
             bm.states_to_box_variable.update(
                 {
                     (
-                        bm.state_indices[
+                        bm.state_indexes[
                             bm._rename_rsm_box_state(box.dfa.start_state, box.variable)
                         ],
-                        bm.state_indices[bm._rename_rsm_box_state(state, box.variable)],
+                        bm.state_indexes[bm._rename_rsm_box_state(state, box.variable)],
                     ): box.variable.value
                     for state in box.dfa.final_states
                 }
@@ -154,10 +154,10 @@ class BooleanMatrices:
                 if not isinstance(states_to, set):
                     states_to = {states_to}
                 for s_to in states_to:
-                    idx_from = self.state_indices[
+                    idx_from = self.state_indexes[
                         self._rename_rsm_box_state(s_from, box.variable)
                     ]
-                    idx_to = self.state_indices[
+                    idx_to = self.state_indexes[
                         self._rename_rsm_box_state(s_to, box.variable)
                     ]
 
@@ -166,7 +166,7 @@ class BooleanMatrices:
                         continue
                     if label not in bmatrix:
                         bmatrix[label] = sparse.dok_matrix(
-                            (self.states_count, self.states_count), dtype=bool
+                            (self.num_states, self.num_states), dtype=bool
                         )
                     bmatrix[label][idx_from, idx_to] = True
 
