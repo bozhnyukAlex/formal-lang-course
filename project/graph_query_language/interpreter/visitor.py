@@ -119,16 +119,21 @@ class Visitor(GraphQueryLanguageVisitor):
         return FiniteAutomata.fromString(self.visit(ctx.string()))
 
     def visitAnfunc(self, ctx: GraphQueryLanguageParser.AnfuncContext) -> Fun:
+        if ctx.anfunc():
+            return self.visitAnfunc(ctx.anfunc())
         params = self.visitVariables(ctx.variables())
         body = ctx.expr()
         return Fun(params=params, body=body)
 
-    def _apply_lambda(self, fun: Fun, value: BaseType) -> BaseType:
+    def _apply_lambda(self, fun: Fun, value: BaseType = None) -> BaseType:
         key = next(iter(fun.params))
         self.memory = self.memory.create_next_scope()
         self.memory.add_variable(key, value)
+        if len(fun.params) > 0 and value is not None:
+            key = next(iter(fun.params))
+            self.memory.add_variable(key, value)
         result = self.visit(fun.body)
-        self.memory = self.memory.removeLast()
+        self.memory = self.memory.remove_last_scope()
         return result
 
     def _visit_func(
@@ -154,7 +159,21 @@ class Visitor(GraphQueryLanguageVisitor):
             raise GQLTypeError(
                 msg=f"Lambda argument count mismatched: Expected {len(anfunc.params)}. Got {params_count}"
             )
-        raise NotImplementedException
+        new_iterable = set()
+        for elem in iterable.data:
+            if len(anfunc.params) == 1 and next(iter(anfunc.params)) == "_":
+                result = self._apply_lambda(anfunc)
+            else:
+                result = self._apply_lambda(anfunc, elem)
+            if method == "map":
+                new_iterable.add(result)
+            elif method == "filter":
+                if result:
+                    new_iterable.add(elem)
+            else:
+                raise NotImplementedError(f"Visitor._visit_func wrong method {method}")
+
+        return Set(internal_set=new_iterable)
 
     def visitMapping(self, ctx: GraphQueryLanguageParser.MappingContext):
         return self._visit_func(ctx, method="map")

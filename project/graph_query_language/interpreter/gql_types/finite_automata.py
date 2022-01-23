@@ -19,9 +19,8 @@ from project.rpq import get_reachable
 
 
 class FiniteAutomata(BaseAutomata):
-    def __init__(self, nfa: NondeterministicFiniteAutomaton, reachable_set: set = None):
+    def __init__(self, nfa: NondeterministicFiniteAutomaton):
         self.nfa = nfa
-        self.reachable_set = reachable_set or self.__get_reachable(nfa=nfa)
 
     def __str__(self):
         return str(self.nfa.minimize().to_regex())
@@ -117,4 +116,4 @@ class FiniteAutomata(BaseAutomata):
         self.nfa = add_states_to_nfa(self.nfa, final_states=final_states.data)
 
     def get_reachable(self):
-        return Set(self.reachable_set)
+        return Set(FiniteAutomata.__get_reachable(self.nfa))
