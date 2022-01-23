@@ -41,7 +41,7 @@ class Visitor(GraphQueryLanguageVisitor):
             value = self.visit(ctx.expr())
             sys.stdout.write(str(value) + "\n")
         else:
-            name = ctx.var().getText()
+            name = ctx.VAR().getText()
             value = self.visit(ctx.expr())
             self.memory.add_variable(name, value)
 

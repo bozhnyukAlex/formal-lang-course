@@ -1,6 +1,6 @@
-G1 = LOAD "skos";
-G2 = LOAD "travel";
-G1_Labels = GET LABELS FROM g1;
-G2_Labels = GET LABELS FROM g2;
+G1 = LOAD GRAPH "skos";
+G2 = LOAD GRAPH "travel";
+G1_Labels = GET LABELS FROM G1;
+G2_Labels = GET LABELS FROM G2;
 Intersect_Labels = G1_Labels & G2_Labels;
 PRINT Intersect_Labels;
