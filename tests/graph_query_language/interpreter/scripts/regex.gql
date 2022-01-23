@@ -1,0 +1,6 @@
+Regex_First = "l1" . "l2"*;
+Regex_Second = "l1" | "l2"* | "l4";
+Intersection = Regex_First & Regex_Second;
+PRINT Intersection;
+Regex_Third = Regex_First | Regex_Second;
+PRINT Intersection & Regex_Third;

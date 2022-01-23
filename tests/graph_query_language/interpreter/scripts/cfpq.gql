@@ -1,0 +1,6 @@
+CFG = """S -> a S b
+S -> epsilon
+""";
+Graph = LOAD GRAPH "skos";
+CFPQ = CFG & Graph;
+PRINT CFPQ;

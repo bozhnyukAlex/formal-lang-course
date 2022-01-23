@@ -3,7 +3,6 @@ from collections import namedtuple
 from typing import Union
 
 from antlr4 import ParserRuleContext
-
 from project.graph_query_language.generated.GraphQueryLanguageParser import (
     GraphQueryLanguageParser,
 )
@@ -19,10 +18,10 @@ from project.graph_query_language.interpreter.gql_types.base_automata import (
 )
 from project.graph_query_language.interpreter.gql_types.base_type import BaseType
 from project.graph_query_language.interpreter.gql_types.bool import Bool
-from project.graph_query_language.interpreter.gql_types.rsm import RSM
 from project.graph_query_language.interpreter.gql_types.finite_automata import (
     FiniteAutomata,
 )
+from project.graph_query_language.interpreter.gql_types.gql_cfq import GqlCFG
 from project.graph_query_language.interpreter.gql_types.set import Set
 from project.graph_query_language.interpreter.memory import Memory
 from project.graph_query_language.interpreter.utils import get_graph_by_name
@@ -42,7 +41,7 @@ class Visitor(GraphQueryLanguageVisitor):
             value = self.visit(ctx.expr())
             sys.stdout.write(str(value) + "\n")
         else:
-            name = ctx.var().getText()
+            name = ctx.VAR().getText()
             value = self.visit(ctx.expr())
             self.memory.add_variable(name, value)
 
@@ -87,9 +86,7 @@ class Visitor(GraphQueryLanguageVisitor):
     ):
         graph = self.visit(ctx.var(0)) if ctx.var(0) else self.visit(ctx.graph())
         nodes = self.visit(ctx.var(1)) if ctx.var(1) else self.visit(ctx.vertices())
-        getattr(graph, method)(nodes)
-
-        return graph
+        return getattr(graph, method)(nodes)
 
     def visitSet_start(self, ctx: GraphQueryLanguageParser.Set_startContext):
         return self._change_states(ctx, method="set_start")
@@ -119,16 +116,21 @@ class Visitor(GraphQueryLanguageVisitor):
         return FiniteAutomata.fromString(self.visit(ctx.string()))
 
     def visitAnfunc(self, ctx: GraphQueryLanguageParser.AnfuncContext) -> Fun:
+        if ctx.anfunc():
+            return self.visitAnfunc(ctx.anfunc())
         params = self.visitVariables(ctx.variables())
         body = ctx.expr()
         return Fun(params=params, body=body)
 
-    def _apply_lambda(self, fun: Fun, value: BaseType) -> BaseType:
+    def _apply_lambda(self, fun: Fun, value: BaseType = None) -> BaseType:
         key = next(iter(fun.params))
         self.memory = self.memory.create_next_scope()
         self.memory.add_variable(key, value)
+        if len(fun.params) > 0 and value is not None:
+            key = next(iter(fun.params))
+            self.memory.add_variable(key, value)
         result = self.visit(fun.body)
-        self.memory = self.memory.removeLast()
+        self.memory = self.memory.remove_last_scope()
         return result
 
     def _visit_func(
@@ -154,7 +156,21 @@ class Visitor(GraphQueryLanguageVisitor):
             raise GQLTypeError(
                 msg=f"Lambda argument count mismatched: Expected {len(anfunc.params)}. Got {params_count}"
             )
-        raise NotImplementedException
+        new_iterable = set()
+        for elem in iterable.data:
+            if len(anfunc.params) == 1 and next(iter(anfunc.params)) == "_":
+                result = self._apply_lambda(anfunc)
+            else:
+                result = self._apply_lambda(anfunc, elem)
+            if method == "map":
+                new_iterable.add(result)
+            elif method == "filter":
+                if result:
+                    new_iterable.add(elem)
+            else:
+                raise NotImplementedError(f"Visitor._visit_func wrong method {method}")
+
+        return Set(internal_set=new_iterable)
 
     def visitMapping(self, ctx: GraphQueryLanguageParser.MappingContext):
         return self._visit_func(ctx, method="map")
@@ -243,6 +259,15 @@ class Visitor(GraphQueryLanguageVisitor):
     def visitVar_edge(self, ctx: GraphQueryLanguageParser.Var_edgeContext):
         pass
 
-    def visitCfg(self, ctx: GraphQueryLanguageParser.CfgContext) -> RSM:
+    def visitCfg(self, ctx: GraphQueryLanguageParser.CfgContext) -> GqlCFG:
         cfg_text = ctx.CFG().getText().strip('"""')
-        return RSM.fromText(cfg_text)
+        return GqlCFG.fromText(cfg_text)
+
+    def visitVertices(self, ctx: GraphQueryLanguageParser.VerticesContext):
+        return self.visitChildren(ctx)
+
+    def visitLabels(self, ctx: GraphQueryLanguageParser.LabelsContext):
+        return self.visitChildren(ctx)
+
+    def visitVal(self, ctx: GraphQueryLanguageParser.ValContext):
+        return self.visitChildren(ctx)

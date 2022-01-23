@@ -1,0 +1,5 @@
+Graph = LOAD GRAPH "travel";
+Query = "l1"* | "l2";
+Intersection = Graph & Query;
+Reachable_Vert = GET REACHABLE VERTICES FROM Intersection;
+PRINT Reachable_Vert;

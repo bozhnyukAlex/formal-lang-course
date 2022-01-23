@@ -259,11 +259,11 @@ expr -> LP expr RP
       | var
       | val
       | NOT expr
+      | expr KLEENE
       | expr IN expr
       | expr AND expr
       | expr DOT expr
       | expr OR expr
-      | expr KLEENE
 
 
 graph -> load_graph
@@ -344,7 +344,10 @@ val -> boolean
      | vertices
 
 
-boolean -> BOOL
+boolean -> boolean
+boolean -> TRUE | FALSE
+TRUE -> 'true'
+FALSE -> 'false'
 
 LAMBDA -> 'LAMBDA'
 LOAD -> 'LOAD'
@@ -413,3 +416,40 @@ Q = ("type" | l1)*;
 RES = G & Q;
 PRINT RES;
 ```
+
+# Спецификация интерпретатора GQL (языка запросов к графам)
+## Типизация
+Типизация строгая динамическая с использованием проверки типов runtime.
+
+## Типы данных языка GQL
+### Bool
+Булевый тип данных. Поддерживает основные логические операции И, ИЛИ, НЕ над объектами Bool.
+Результатом логической операции является GQLBool.
+### Set
+Множество с элементами одного типа. Допустимы пересечение, объединение двух множеств. Реализована проверка на вхождение во множество IN.
+### FiniteAutomata
+Класс конечных автоматов. Служит для представления графов или регулярных выражений. Реализована поддержка операций, допустимых с точки зрения теории формальных языков: пересечение, объединение двух FiniteAutomata. Пересечение, объединение с GqlCFG.
+### GqlCFG
+Класс для КС-грамматик. Допустимы операции, аналогичные FiniteAutomata. Пересечение двух КС-грамматик не разрешено.
+
+
+#### Особенности
+FiniteAutomata, GqlCFG являются наследниками одного типа BaseAutomata.
+Введённая строка интерпретируется как регулярное выражение и переводится в тип FiniteAutomata.
+Введённая строка в тройных кавычках интерпретируется как КС-грамматика и переводится в тип GqlCFG.
+
+## Используемые алгоритмы
+Используются алгоритмы и функции, реализованные в предыдущих заданиях. В частности, для вычисления достижимых вершин используется класс булевых матриц BooleanMatrices.
+
+## Пример работы интерпретатора
+`regex.gql`
+```
+Regex_First = "l1" . "l2"*;
+Regex_Second = "l1" | "l2"* | "l4";
+Intersection = Regex_First & Regex_Second;
+PRINT Intersection;
+Regex_Third = Regex_First | Regex_Second;
+PRINT Intersection & Regex_Third;
+```
+Пример запуска интерпретатора (из корня проекта):
+`python -m project.graph_query_language.interpreter ./tests/graph_query_language/interpreter/scripts/labels_filter.gql`
