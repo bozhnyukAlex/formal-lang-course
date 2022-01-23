@@ -5,6 +5,14 @@ from project.graph_query_language.interpreter.gql_types.base_type import BaseTyp
 
 
 class Bool(BaseType):
+    """
+    GQL boolean type
+    Attributes
+    ----------
+    b: bool
+        Internal boolean value
+    """
+
     def __init__(self, b: bool):
         self.b = b
 
@@ -21,15 +29,44 @@ class Bool(BaseType):
         return "TRUE" if self.b else "FALSE"
 
     def intersect(self, other: "Bool") -> "Bool":
+        """
+        '&' (AND) operation
+        Parameters
+        ----------
+        other: Bool
+            Boolean object
+        Returns
+        -------
+        intersection: Bool
+            Logical 'AND'
+        """
         return Bool(self.b and other.b)
 
     def union(self, other: "Bool") -> "Bool":
+        """
+        | (OR) operation
+        Parameters
+        ----------
+        other: Bool
+            Boolean object
+        Returns
+        -------
+        intersection: Bool
+            Logical 'OR'
+        """
         return Bool(self.b or other.b)
 
     def concatenate(self, other: "Bool"):
         raise NotImplementedException("Bool doesn't support '.' operation")
 
-    def inverse(self):
+    def inverse(self) -> "Bool":
+        """
+        not (NOT) operation
+        Returns
+        -------
+        complement: Bool
+            Logical 'NOT'
+        """
         return Bool(not self.b)
 
     def kleene(self):

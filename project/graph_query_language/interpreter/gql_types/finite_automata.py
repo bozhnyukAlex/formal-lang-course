@@ -6,6 +6,7 @@ from project import regex_str_to_min_dfa
 from project.graphs import graph_to_nfa, add_states_to_nfa, replace_nfa_states
 from project.graph_query_language.interpreter.gql_exceptions import (
     InvalidCastException,
+    GQLTypeError,
 )
 from project.graph_query_language.interpreter.gql_types.base_automata import (
     BaseAutomata,
@@ -19,6 +20,14 @@ from project.rpq import get_reachable
 
 
 class FiniteAutomata(BaseAutomata):
+    """
+    Gql type of Finite Automata
+    Attributes
+    ----------
+    nfa: NondeterministicFiniteAutomaton
+        Internal nfa object
+    """
+
     def __init__(self, nfa: NondeterministicFiniteAutomaton):
         self.nfa = nfa
 
@@ -27,66 +36,176 @@ class FiniteAutomata(BaseAutomata):
 
     @staticmethod
     def __get_reachable(nfa: NondeterministicFiniteAutomaton) -> set:
+        """
+        Internal function to get reachable vertices set
+        Parameters
+        ----------
+        nfa: NondeterministicFiniteAutomaton
+            Finite Automata
+        Returns
+        -------
+        reachable: set
+            Reachable vertices set
+        """
         bmatrix = BooleanMatrices(nfa)
         return get_reachable(bmatrix)
 
     @classmethod
-    def fromGraph(cls, graph: MultiDiGraph):
+    def fromGraph(cls, graph: MultiDiGraph) -> "FiniteAutomata":
+        """
+        Parameters
+        ----------
+        graph: MultiDiGraph
+            Transform graph into automata
+        Returns
+        -------
+        fa: FiniteAutomata
+            Automata transformed from graph
+        """
         return cls(nfa=graph_to_nfa(graph))
 
     @classmethod
-    def fromString(cls, regex_str: str):
+    def fromString(cls, regex_str: str) -> "FiniteAutomata":
+        """
+        Parameters
+        ----------
+        regex_str: str
+            Transform regular-expression string into automata
+        Returns
+        -------
+        fa: FiniteAutomata
+            Automata transformed from string
+        Raises
+        ------
+        InvalidCastException
+            If given string violates regular expression rules
+        """
         try:
             return FiniteAutomata(nfa=regex_str_to_min_dfa(regex_str))
         except MisformedRegexError as exc:
-            raise InvalidCastException from exc
+            raise InvalidCastException("str", "regex") from exc
 
     def __intersectFiniteAutomata(self, other: "FiniteAutomata") -> "FiniteAutomata":
+        """
+        Inner intersection (FiniteAutomata & FiniteAutomata) function
+        Parameters
+        ----------
+        other: FiniteAutomata
+            Finite Automata
+        Returns
+        -------
+        intersection: FiniteAutomata
+            Intersection of two FA
+        """
         lhs = BooleanMatrices(self.nfa)
         rhs = BooleanMatrices(other.nfa)
         intersection_result = lhs.intersect(rhs)
         return FiniteAutomata(
             nfa=intersection_result.to_automaton(),
-            reachable_set=get_reachable(bmatrix=intersection_result),
         )
 
     def __intersectCFG(self, other: GqlCFG) -> GqlCFG:
+        """
+        Inner intersection (FiniteAutomata & GqlCFG) function
+        Parameters
+        ----------
+        other: GqlCFG
+            Context Free Grammar
+        Returns
+        -------
+        intersection: GqlCFG
+            Intersection of FiniteAutomata with GqlCFG
+        """
         intersection = other.intersect(self)
         return intersection
 
-    def intersect(self, other: "FiniteAutomata"):
+    def intersect(self, other: "FiniteAutomata") -> "BaseAutomata":
+        """
+        Automata & Automata intersection
+        Parameters
+        ----------
+        other: GqlCFG | FiniteAutomata
+            GqlCFG or FiniteAutomata object
+        Returns
+        -------
+        intersection: BaseAutomata
+            cfg, IF 'other' is GqlCFG
+            fa, IF 'other' is FiniteAutomata
+        Raises
+        ------
+        GQLTypeError
+            If object does not represent FiniteAutomata or GqlCFG
+        """
         if isinstance(other, FiniteAutomata):
             return self.__intersectFiniteAutomata(other=other)
 
         if isinstance(other, GqlCFG):
             return self.__intersectCFG(other=other)
 
-        raise InvalidCastException("FiniteAutomata", str(type(other)))
+        raise GQLTypeError(
+            f"Expected type BaseAutomata, got {str(type(other))} instead."
+        )
 
-    def union(self, other: "FiniteAutomata"):
+    def union(self, other: "FiniteAutomata") -> "FiniteAutomata":
+        """
+        Union of two FiniteAutomata
+        Parameters
+        ----------
+        other: FiniteAutomata
+            rhs FA
+        Returns
+        -------
+        union: FiniteAutomata
+            Union of two FA
+        """
         return FiniteAutomata(self.nfa.union(other.nfa).to_deterministic())
 
-    def concatenate(self, other: "FiniteAutomata"):
+    def concatenate(self, other: "FiniteAutomata") -> "FiniteAutomata":
+        """
+        Concatenate of two FiniteAutomata
+        Parameters
+        ----------
+        other: FiniteAutomata
+            rhs FA
+        Returns
+        -------
+        concatenate: FiniteAutomata
+            Concatenate of two FA
+        """
         lhs = self.nfa.to_regex()
         rhs = other.nfa.to_regex()
         return FiniteAutomata(lhs.concatenate(rhs).to_epsilon_nfa().to_deterministic())
 
-    def inverse(self):
+    def inverse(self) -> "FiniteAutomata":
+        """
+        Get complement of FiniteAutomata
+        Returns
+        -------
+        complement: FiniteAutomata
+            Complement of FA
+        """
         return FiniteAutomata(self.nfa.get_complement().to_deterministic())
 
-    def kleene(self):
+    def kleene(self) -> "FiniteAutomata":
+        """
+        Kleene closure of FiniteAutomata
+        Returns
+        -------
+        kleene: FiniteAutomata
+            Kleene closure of FA
+        """
         return FiniteAutomata(nfa=self.nfa.kleene_star().to_deterministic())
 
     @property
-    def start(self):
+    def start(self) -> Set:
         return Set(self.nfa.start_states)
 
     @property
-    def final(self):
+    def final(self) -> Set:
         return Set(self.nfa.final_states)
 
     @property
-    def labels(self):
+    def labels(self) -> Set:
         return Set(self.nfa.symbols)
 
     @property
@@ -100,20 +219,26 @@ class FiniteAutomata(BaseAutomata):
         return Set(edges_set)
 
     @property
-    def vertices(self):
+    def vertices(self) -> Set:
         return Set(self.nfa.states)
 
-    def set_start(self, start_states: Set):
-        self.nfa = replace_nfa_states(self.nfa, start_states=start_states.data)
+    def set_start(self, start_states: Set) -> "FiniteAutomata":
+        nfa = replace_nfa_states(self.nfa, start_states=start_states.data)
+        return FiniteAutomata(nfa)
 
-    def set_final(self, final_states: Set):
-        self.nfa = replace_nfa_states(self.nfa, final_states=final_states.data)
+    def set_final(self, final_states: Set) -> "FiniteAutomata":
+        nfa = replace_nfa_states(self.nfa, final_states=final_states.data)
+        return FiniteAutomata(nfa)
 
-    def add_start(self, start_states: Set):
-        self.nfa = add_states_to_nfa(self.nfa, start_states=start_states.data)
+    def add_final(self, final_states: Set) -> "FiniteAutomata":
+        nfa = add_states_to_nfa(self.nfa, final_states=final_states.data)
+        return FiniteAutomata(nfa)
 
-    def add_final(self, final_states: Set):
-        self.nfa = add_states_to_nfa(self.nfa, final_states=final_states.data)
-
-    def get_reachable(self):
+    def get_reachable(self) -> Set:
+        """
+        Returns
+        -------
+        reachable: Set
+            Reachable vertices set
+        """
         return Set(FiniteAutomata.__get_reachable(self.nfa))
